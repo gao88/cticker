@@ -7,19 +7,32 @@ import (
 )
 
 func TestCTicker(t *testing.T) {
-	ticker := NewQueue(0, 0)
+	ticker := NewQueue(10, 0)
 	for index := 0; index < 100; index++ {
-		var task Task
 		var i = index
-		task.handler = func() error {
-			fmt.Println("index:", i)
-			return nil
+
+		err := ticker.AddTimerTask(fmt.Sprint(index), func() {
+			fmt.Println("1.index:", i)
+		})
+
+		if err != nil {
+			fmt.Println(err)
 		}
-		ticker.AddTimerTask(index+1, fmt.Sprint(index), &task)
 	}
+
 	time.Sleep(time.Second * 5)
-	ticker.CancelTask(fmt.Sprint(10))
-	ta := ticker.GetTask(fmt.Sprint(15))
-	ta.Cancel()
+
+	for index := 0; index < 100; index++ {
+		var i = index
+
+		err := ticker.AddTimerTask(fmt.Sprint(index), func() {
+			fmt.Println("2.index:", i)
+		})
+
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
 	time.Sleep(time.Hour)
 }

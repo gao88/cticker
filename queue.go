@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-const defaultSlotNum = 512
+const defaultSlotNum = 60
 const defaultDuration = time.Second
 
 // Queue 环形队列
@@ -18,7 +18,7 @@ type Queue struct {
 
 // NewQueue 新建一个num个slot的环形队列
 // 环形队列序号从 1 开始
-func NewQueue(num int, duration time.Duration) *Queue {
+func NewQueue(num int, duration ...time.Duration) *Queue {
 	q := new(Queue)
 	q.s = newSlots(num, duration)
 	q.taskHoler = newTaskHolder()
@@ -38,11 +38,18 @@ func (q *Queue) CancelTask(sequenceid string) {
 }
 
 // AddTimerTask 增加定时任务
-func (q *Queue) AddTimerTask(seconds int, sequenceid string, task *Task) error {
+func (q *Queue) AddTimerTask(sequenceid string, handler func()) error {
+	var task = &Task{}
 	task.seqid = sequenceid
-	count := q.s.current + seconds
-	task.cycleNum = count / q.slotNum
-	index := count % q.slotNum
+	task.handler = handler
+
+	var index int
+	if q.s.current > 1 {
+		index = q.s.current - 1
+	} else {
+		index = q.slotNum - 1
+	}
+
 	q.taskHoler.add(sequenceid, task)
 
 	return q.s.addByIndex(index, task)

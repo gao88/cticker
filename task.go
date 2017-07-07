@@ -7,17 +7,15 @@ import (
 
 // Task Slot中定时任务个体
 type Task struct {
-	seqid    string       //
-	cycleNum int          // 第几圈执行此定时任务
-	handler  func() error // 执行任务的函数,参数个自定义
-	cancel   bool         // true-表示取消，false-表示执行
+	seqid   string //
+	handler func() // 执行任务的函数,参数个自定义
+	cancel  bool   // true-表示取消，false-表示执行
 }
 
 // SetTaskHandler 设置任务函数
-func (task *Task) SetTaskHandler(h func() error) {
+func (task *Task) SetTaskHandler(h func()) {
 	if nil == h {
-		task.handler = func() error {
-			return nil
+		task.handler = func() {
 		}
 	}
 	task.handler = h
