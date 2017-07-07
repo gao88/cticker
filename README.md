@@ -2,6 +2,7 @@
 circle time queue
 
 ## Demo
+```
 package cticker
 
 import (
@@ -12,16 +13,13 @@ import (
 
 func TestCTicker(t *testing.T) {
 	ticker := NewQueue(10, 0)
-	for index := 0; index < 10; index++ {
-		var task Task
+	for index := 0; index < 100; index++ {
 		var i = index
 
-		task.handler = func() error {
+		err := ticker.AddTimerTask(fmt.Sprint(index), func() {
 			fmt.Println("1.index:", i)
-			return nil
-		}
+		})
 
-		err := ticker.AddTimerTask(fmt.Sprint(index), &task)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -30,15 +28,12 @@ func TestCTicker(t *testing.T) {
 	time.Sleep(time.Second * 5)
 
 	for index := 0; index < 100; index++ {
-		var task Task
 		var i = index
 
-		task.handler = func() error {
+		err := ticker.AddTimerTask(fmt.Sprint(index), func() {
 			fmt.Println("2.index:", i)
-			return nil
-		}
+		})
 
-		err := ticker.AddTimerTask(fmt.Sprint(index), &task)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -46,3 +41,4 @@ func TestCTicker(t *testing.T) {
 
 	time.Sleep(time.Hour)
 }
+```
